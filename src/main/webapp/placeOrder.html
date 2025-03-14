@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/placeOrder.css">
+</head>
+<body>
+<div class="container">
+    <h1>Place Your Order</h1>
+    <form id="orderForm">
+        <label for="packageType">Package Type:</label>
+        <select id="packageType" name="packageType">
+            <!-- Options will be dynamically populated -->
+        </select>
+
+        <label for="dietType">Diet Type:</label>
+        <select id="dietType" name="dietType">
+            <option value="Veg">Veg</option>
+            <option value="Non Veg">Non Veg</option>
+        </select>
+
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required>
+
+        <button type="button" onclick="calculateAmount()">Calculate Amount</button>
+        <p id="amountDisplay"></p>
+
+        <button type="button" onclick="payNow()">Pay Now</button>
+    </form>
+    <button onclick="window.location.href='viewPackage.html'">Back to View Packages</button>
+</div>
+<script>
+    let packages = [];
+
+    // Fetch packages from the server
+    fetch('getPackages')
+        .then(response => response.json())
+        .then(data => {
+            packages = data;
+            const packageTypeSelect = document.getElementById('packageType');
+            packages.forEach(pkg => {
+                const option = document.createElement('option');
+                option.value = pkg.package_id; // Ensure this is the package_id
+                option.text = `${pkg.package_name} - $${pkg.price}`;
+                packageTypeSelect.add(option);
+            });
+        });
+
+    function calculateAmount() {
+        const packageId = document.getElementById('packageType').value;
+        const selectedPackage = packages.find(pkg => pkg.package_id == packageId);
+        if (selectedPackage) {
+            document.getElementById('amountDisplay').innerText = 'Total Amount: $' + selectedPackage.price;
+        }
+    }
+
+    function payNow() {
+        const packageId = document.getElementById('packageType').value;
+        const dietType = document.getElementById('dietType').value;
+        const startDate = document.getElementById('startDate').value;
+        const amount = document.getElementById('amountDisplay').innerText.split('$')[1];
+
+        // Simulate payment and order creation
+        const transactionId = 'TXN' + Math.floor(Math.random() * 1000000); // Simulated transaction ID
+
+        // Send data to the server
+        fetch('placeOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                packageId, // Ensure packageId is included
+                dietType,
+                startDate,
+                amount,
+                transactionId
+            })
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  alert('Order placed successfully!');
+                  window.location.href = 'landing.html'; // Redirect to landing page
+              } else {
+                  alert('Failed to place order.');
+              }
+          });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Menu</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/viewMenu.css">
+</head>
+<body>
+<div class="container">
+    <button onclick="window.location.href='viewPackage.html'" class="back-button">Return to View Packages</button>
+    <h1>Weekly Menu</h1>
+    <div class="menu-container">
+        <div id="non-veg-menu" class="menu-section">
+            <h2>Non-Veg Menu</h2>
+            <!-- Non-veg menu items will be dynamically inserted here -->
+        </div>
+        <div id="veg-menu" class="menu-section">
+            <h2>Veg Menu</h2>
+            <!-- Veg menu items will be dynamically inserted here -->
+        </div>
+    </div>
+</div>
+<script>
+    // Fetch menu from the server
+    fetch('getMenu')
+        .then(response => response.json())
+        .then(data => {
+            const vegMenuDiv = document.getElementById('veg-menu');
+            const nonVegMenuDiv = document.getElementById('non-veg-menu');
+
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+            days.forEach(day => {
+                const vegDayDiv = document.createElement('div');
+                vegDayDiv.className = 'day-section';
+                vegDayDiv.innerHTML = `<h3>${day}</h3>`;
+                vegMenuDiv.appendChild(vegDayDiv);
+
+                const nonVegDayDiv = document.createElement('div');
+                nonVegDayDiv.className = 'day-section';
+                nonVegDayDiv.innerHTML = `<h3>${day}</h3>`;
+                nonVegMenuDiv.appendChild(nonVegDayDiv);
+
+                data.forEach(item => {
+                    if (item.day_of_week === day) {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'menu-item';
+                        itemDiv.innerHTML = `<p>${item.meal_type}: ${item.description}</p>`;
+                        if (item.category === 'Veg') {
+                            vegDayDiv.appendChild(itemDiv);
+                        } else {
+                            nonVegDayDiv.appendChild(itemDiv);
+                        }
+                    }
+                });
+            });
+        });
+</script>
+</body>
+</html>
