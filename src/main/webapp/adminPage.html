@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/admin.css">
+    <style>
+        /* Inline CSS for demonstration; ideally, move this to admin.css */
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #d9534f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logout-button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <a class="logout-button" onclick="logout()" >Logout</a>
+    <h1>Welcome, Admin!</h1>
+    <nav>
+        <ul>
+            <li><a href="/my-webapp-1.0-SNAPSHOT/admin/viewOrders">Orders</a></li>
+            <li><a href="/my-webapp-1.0-SNAPSHOT/admin/viewReviews">Reviews</a></li>
+            <li><a href="/my-webapp-1.0-SNAPSHOT/admin/viewUsers">Users</a></li>
+            <li><a href="/my-webapp-1.0-SNAPSHOT/admin/viewMenu">Menu</a></li>
+            <li><a href="/my-webapp-1.0-SNAPSHOT/admin/viewPayments">Payments</a></li>
+            <li><a href="/my-webapp-1.0-SNAPSHOT/admin/viewPackages">Packages</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <p>Welcome to the admin dashboard. Use the navigation above to manage different aspects of the application.</p>
+        <button>Perform Admin Action</button>
+    </div>
+</div>
+</body>
+<script>
+    function logout() {
+        fetch('logout', {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                window.location.href = 'login.html'; // Redirect to login page
+            } else {
+                alert('Failed to log out.');
+            }
+        });
+    }
+
+
+</script>
+</html>

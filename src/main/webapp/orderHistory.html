@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/orderHistory.css">
+</head>
+<body>
+<div class="container">
+    <h2>Your Order History</h2>
+    <button onclick="window.location.href='landing.html'" class="return-button">Return to Dashboard</button>
+    <table id="orderTable">
+        <thead>
+        <tr>
+            <th>Package</th>
+            <th>Diet Type</th>
+            <th>Start Date</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Review</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Orders will be populated here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for leaving a review -->
+<div id="reviewModal" style="display:none;">
+    <h3>Leave a Review</h3>
+    <textarea id="reviewText" rows="4" cols="50"></textarea><br>
+    <button onclick="submitReview()">Submit</button>
+    <button onclick="closeModal()">Cancel</button>
+</div>
+
+<script>
+    let currentOrderId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('orderHistory')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const tbody = document.querySelector('#orderTable tbody');
+                    data.orders.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.packageName}</td>
+                            <td>${order.dietType}</td>
+                            <td>${order.startDate}</td>
+                            <td>${order.orderStatus}</td>
+                            <td>
+                                ${order.orderStatus !== 'Cancelled' ? `<button onclick="cancelOrder(${order.orderId})">Cancel</button>` : ''}
+                            </td>
+                            <td>
+                                <button onclick="checkReview(${order.orderId})">Review</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    alert('Failed to fetch order history.');
+                }
+            });
+    });
+
+    function cancelOrder(orderId) {
+        fetch('cancelOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `orderId=${orderId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order cancelled successfully.');
+                location.reload(); // Reload the page to update the order status
+            } else {
+                alert('Failed to cancel the order.');
+            }
+        });
+    }
+
+    function checkReview(orderId) {
+        fetch(`review?orderId=${orderId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.reviewExists) {
+                        alert('Review already submitted: ' + data.reviewText);
+                    } else {
+                        currentOrderId = orderId;
+                        document.getElementById('reviewModal').style.display = 'block';
+                    }
+                } else {
+                    alert('Failed to check review status.');
+                }
+            });
+    }
+
+    function submitReview() {
+        const reviewText = document.getElementById('reviewText').value;
+        fetch('review', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `orderId=${currentOrderId}&reviewText=${encodeURIComponent(reviewText)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Review submitted successfully.');
+                location.reload(); // Reload the page to update the review status
+            } else {
+                alert('Failed to submit review.');
+            }
+        });
+    }
+
+    function closeModal() {
+        document.getElementById('reviewModal').style.display = 'none';
+    }
+</script>
+</body>
+</html>
