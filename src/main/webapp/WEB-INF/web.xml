@@ -8,7 +8,7 @@
   
 <!--  <servlet>-->
 <!--  		<servlet-name>login</servlet-name>-->
-<!--  		<servlet-class>com.savorybox.LoginServlet</servlet-class>-->
+<!--  		<servlet-class>com.savorybox.authentication.LoginServlet</servlet-class>-->
 <!--  </servlet>-->
 <!--  <servlet-mapping>-->
 <!--  		<servlet-name>login</servlet-name>-->
@@ -18,7 +18,7 @@
 
 <!--    <servlet>-->
 <!--        <servlet-name>register</servlet-name>-->
-<!--        <servlet-class>com.savorybox.RegisterServlet</servlet-class>-->
+<!--        <servlet-class>com.savorybox.authentication.RegisterServlet</servlet-class>-->
 <!--    </servlet>-->
 <!--    <servlet-mapping>-->
 <!--        <servlet-name>register</servlet-name>-->

@@ -1,4 +1,4 @@
-package com.savorybox;
+package com.savorybox.orders;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;

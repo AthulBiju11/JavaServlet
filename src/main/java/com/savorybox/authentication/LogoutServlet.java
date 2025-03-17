@@ -1,5 +1,4 @@
-package com.savorybox;
-
+package com.savorybox.authentication;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

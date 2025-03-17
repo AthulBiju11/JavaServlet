@@ -1,4 +1,4 @@
-package com.savorybox;
+package com.savorybox.authentication;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -31,28 +31,31 @@ public class LoginServlet extends HttpServlet {
 
 		try {
 			Class.forName(driver);
-			// Establish connection
 			connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-			// Check user credentials
-			String sql = "SELECT user_id FROM users WHERE email = ? AND password = ?";
+			String sql = "SELECT user_id, user_role FROM users WHERE email = ? AND password = ?";
 			statement = connection.prepareStatement(sql);
 			statement.setString(1, email);
 			statement.setString(2, password);
 			ResultSet resultSet = statement.executeQuery();
 
 			if (resultSet.next()) {
-				// Get user ID from the result set
 				int userId = resultSet.getInt("user_id");
+				String userRole = resultSet.getString("user_role");
 
-				// Create a session and store the user ID
 				HttpSession session = request.getSession();
 				session.setAttribute("userId", userId);
+				session.setAttribute("userRole", userRole);
 
 				response.setContentType("text/html");
 				response.getWriter().println("<script type=\"text/javascript\">");
-				response.getWriter().println("alert('Login Successful');");
-				response.getWriter().println("window.location.href = 'landing.html';");
+				if ("ADMIN".equalsIgnoreCase(userRole)) {
+					response.getWriter().println("alert('Admin Login Successful');");
+					response.getWriter().println("window.location.href = 'adminPage.html';");
+				} else {
+					response.getWriter().println("alert('Login Successful');");
+					response.getWriter().println("window.location.href = 'landing.html';");
+				}
 				response.getWriter().println("</script>");
 			} else {
 				response.setContentType("text/html");

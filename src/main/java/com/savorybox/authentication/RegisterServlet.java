@@ -1,4 +1,4 @@
-package com.savorybox;
+package com.savorybox.authentication;
 
 import java.io.IOException;
 import java.sql.Connection;
